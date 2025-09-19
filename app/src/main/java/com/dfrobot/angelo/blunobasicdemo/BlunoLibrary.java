@@ -25,7 +25,6 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +33,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public abstract  class BlunoLibrary  extends Activity{
+public abstract class BlunoLibrary extends Activity {
 
 	private Context mainContext=this;
 
@@ -53,8 +52,8 @@ public abstract  class BlunoLibrary  extends Activity{
 //		mainContext=theContext;
 //	}
 
-	public abstract void onConectionStateChange(connectionStateEnum theconnectionStateEnum);
-	public abstract void onSerialReceived(String theString);
+	abstract public void onConectionStateChange(connectionStateEnum theconnectionStateEnum);
+	abstract public void onSerialReceived(String theString);
 	public void serialSend(String theString){
 		if (mConnectionState == connectionStateEnum.isConnected) {
 			mSCharacteristic.setValue(theString);
@@ -673,4 +672,5 @@ public abstract  class BlunoLibrary  extends Activity{
 		void OnSuccess();
 		void OnFail(List<String> noPermissions);
 	}
+
 }

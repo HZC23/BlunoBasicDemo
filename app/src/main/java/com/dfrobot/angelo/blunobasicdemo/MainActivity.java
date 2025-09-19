@@ -4,51 +4,35 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.content.Intent;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.ScrollView;
+import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.dfrobot.angelo.blunobasicdemo.data.RobotRepository;
-import com.dfrobot.angelo.blunobasicdemo.data.Telemetry;
-import com.dfrobot.angelo.blunobasicdemo.viewmodel.MainViewModel;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
 public class MainActivity extends BlunoLibrary {
-    private MainViewModel mainViewModel;
+    private static final String TAG = "MainActivity";
 
     // UI Elements
-    private Button buttonScan;
-    private TextView connectionStatus;
-    private TextView serialReceivedText;
-    private ScrollView consoleScrollView;
-
-    // Manual Controls
-    private Button buttonMoveFwd, buttonMoveBwd, buttonMoveLeft, buttonMoveRight, buttonStop;
-
-    // Advanced Controls
-    private SeekBar seekBarSpeed;
-    private EditText editTextHeading;
-    private Button buttonGo;
-    private Switch switchLight;
-    private Button buttonCalibrate;
-
-    // Telemetry UI
-    private TextView telemetryState;
-    private TextView telemetryHeading;
-    private ProgressBar progressDistance;
+    private TextView textViewTitle;
+    private ImageView batteryIcon;
     private TextView telemetryBattery;
+    private Button buttonScan;
+    private ImageView settingsIcon;
+    private CompassView compassView;
+    private Button buttonMoveFwd, buttonMoveBwd, buttonMoveLeft, buttonMoveRight, buttonStop;
+    private Button buttonManuel, buttonAuto, buttonObstacle, buttonPIR, buttonCap;
+    private SeekBar speedSlider;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -56,9 +40,6 @@ public class MainActivity extends BlunoLibrary {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        RobotRepository.getInstance().setBlunoLibrary(this);
 
         // Request permissions
         request(1000, new OnPermissionsResult() {
@@ -81,36 +62,26 @@ public class MainActivity extends BlunoLibrary {
 
         // Setup Listeners
         setupListeners();
-
-        // Observe LiveData
-        observeViewModel();
     }
 
     private void initializeUI() {
+        textViewTitle = findViewById(R.id.textViewTitle);
+        batteryIcon = findViewById(R.id.batteryIcon);
+        telemetryBattery = findViewById(R.id.telemetry_battery);
         buttonScan = findViewById(R.id.buttonScan);
-        connectionStatus = findViewById(R.id.connectionStatus);
-        serialReceivedText = findViewById(R.id.serialReceivedText);
-        consoleScrollView = findViewById(R.id.consoleScrollView);
-
-        // Manual Controls
+        settingsIcon = findViewById(R.id.settingsIcon);
+        compassView = findViewById(R.id.compassView);
         buttonMoveFwd = findViewById(R.id.buttonMoveFwd);
         buttonMoveBwd = findViewById(R.id.buttonMoveBwd);
         buttonMoveLeft = findViewById(R.id.buttonMoveLeft);
         buttonMoveRight = findViewById(R.id.buttonMoveRight);
         buttonStop = findViewById(R.id.buttonStop);
-
-        // Advanced Controls
-        seekBarSpeed = findViewById(R.id.seekBarSpeed);
-        editTextHeading = findViewById(R.id.editTextHeading);
-        buttonGo = findViewById(R.id.buttonGo);
-        switchLight = findViewById(R.id.switchLight);
-        buttonCalibrate = findViewById(R.id.buttonCalibrate);
-
-        // Telemetry
-        telemetryState = findViewById(R.id.telemetry_state);
-        telemetryHeading = findViewById(R.id.telemetry_heading);
-        progressDistance = findViewById(R.id.progress_distance);
-        telemetryBattery = findViewById(R.id.telemetry_battery);
+        buttonManuel = findViewById(R.id.buttonManuel);
+        buttonAuto = findViewById(R.id.buttonAuto);
+        buttonObstacle = findViewById(R.id.buttonObstacle);
+        buttonPIR = findViewById(R.id.buttonPIR);
+        buttonCap = findViewById(R.id.buttonCap);
+        speedSlider = findViewById(R.id.speedSlider);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -118,7 +89,7 @@ public class MainActivity extends BlunoLibrary {
         buttonScan.setOnClickListener(v -> buttonScanOnClickProcess());
 
         // Manual Controls Listeners
-        buttonStop.setOnClickListener(v -> mainViewModel.sendCommand("CMD:MOVE:STOP\n"));
+        buttonStop.setOnClickListener(v -> serialSend("CMD:MOVE:STOP\n"));
 
         View.OnTouchListener moveListener = (v, event) -> {
             String command = "";
@@ -128,9 +99,9 @@ public class MainActivity extends BlunoLibrary {
             else if (v.getId() == R.id.buttonMoveRight) command = "CMD:MOVE:RIGHT\n";
 
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                mainViewModel.sendCommand(command);
+                serialSend(command);
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                mainViewModel.sendCommand("CMD:MOVE:STOP\n");
+                serialSend("CMD:MOVE:STOP\n");
             }
             return true;
         };
@@ -140,8 +111,8 @@ public class MainActivity extends BlunoLibrary {
         buttonMoveLeft.setOnTouchListener(moveListener);
         buttonMoveRight.setOnTouchListener(moveListener);
 
-        // Advanced Controls Listeners
-        seekBarSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        // Speed Slider
+        speedSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {}
 
@@ -150,52 +121,9 @@ public class MainActivity extends BlunoLibrary {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mainViewModel.sendCommand("CMD:SPEED:" + seekBar.getProgress() + "\n");
+                serialSend("CMD:SPEED:" + seekBar.getProgress() + "\n");
             }
         });
-
-        buttonGo.setOnClickListener(v -> {
-            String heading = editTextHeading.getText().toString();
-            if (!heading.isEmpty()) {
-                mainViewModel.sendCommand("CMD:GOTO:" + heading + "\n");
-            }
-        });
-
-        switchLight.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                mainViewModel.sendCommand("CMD:LIGHT:ON\n");
-            } else {
-                mainViewModel.sendCommand("CMD:LIGHT:OFF\n");
-            }
-        });
-
-        buttonCalibrate.setOnClickListener(v -> mainViewModel.sendCommand("CMD:CALIBRATE:COMPASS\n"));
-    }
-
-    private void observeViewModel() {
-        mainViewModel.getTelemetry().observe(this, telemetry -> {
-            if (telemetry != null) {
-                updateTelemetryUI(telemetry);
-            }
-        });
-    }
-
-    private void updateTelemetryUI(Telemetry telemetry) {
-        telemetryState.setText(String.format("State: %s", telemetry.state));
-        telemetryHeading.setText(String.format("Heading: %d°", telemetry.heading));
-        telemetryBattery.setText(telemetry.battery != -1 ? String.format("Battery: %d%%", telemetry.battery) : "Battery: --");
-
-        if (telemetry.distance != -1) {
-            progressDistance.setProgress(100 - telemetry.distance); // Assuming max distance is 100cm
-        } else {
-            progressDistance.setProgress(0);
-        }
-
-        if (telemetry.battery != -1 && telemetry.battery < 20) {
-            telemetryBattery.setTextColor(ContextCompat.getColor(this, R.color.accent_red_alert));
-        } else {
-            telemetryBattery.setTextColor(ContextCompat.getColor(this, R.color.text_grey_light));
-        }
     }
 
     @Override
@@ -203,40 +131,69 @@ public class MainActivity extends BlunoLibrary {
         switch (theConnectionState) {
             case isConnected:
                 buttonScan.setText("Connected");
-                connectionStatus.setText("Connected");
-                connectionStatus.setTextColor(ContextCompat.getColor(this, R.color.accent_green_status));
                 break;
             case isConnecting:
                 buttonScan.setText("Connecting");
-                connectionStatus.setText("Connecting");
-                connectionStatus.setTextColor(Color.YELLOW);
                 break;
             case isToScan:
                 buttonScan.setText("Scan");
-                connectionStatus.setText("Disconnected");
-                connectionStatus.setTextColor(ContextCompat.getColor(this, R.color.accent_red_alert));
                 break;
             case isScanning:
                 buttonScan.setText("Scanning");
-                connectionStatus.setText("Scanning...");
-                connectionStatus.setTextColor(Color.YELLOW);
                 break;
             case isDisconnecting:
                 buttonScan.setText("Disconnecting");
-                connectionStatus.setText("Disconnecting");
-                connectionStatus.setTextColor(ContextCompat.getColor(this, R.color.accent_red_alert));
                 break;
             default:
                 break;
         }
     }
 
+    private StringBuilder serialBuffer = new StringBuilder();
+
     @Override
     public void onSerialReceived(String theString) {
-        serialReceivedText.append(theString);
-        consoleScrollView.fullScroll(View.FOCUS_DOWN);
-        RobotRepository.getInstance().onSerialReceived(theString);
+        serialBuffer.append(theString);
+        String bufferContent = serialBuffer.toString();
+
+        int newlineIndex;
+        while ((newlineIndex = bufferContent.indexOf('\n')) != -1) {
+            String jsonMessage = bufferContent.substring(0, newlineIndex).trim();
+            if (bufferContent.length() > newlineIndex + 1) {
+                bufferContent = bufferContent.substring(newlineIndex + 1);
+            } else {
+                bufferContent = "";
+            }
+
+            if (!jsonMessage.isEmpty()) {
+                runOnUiThread(() -> {
+                    parseTelemetry(jsonMessage);
+                });
+            }
+        }
+        serialBuffer = new StringBuilder(bufferContent);
     }
+
+    private void parseTelemetry(String jsonString) {
+        try {
+            JSONObject json = new JSONObject(jsonString);
+            int heading = json.optInt("heading", 0);
+            int battery = json.optInt("battery", -1);
+
+            compassView.setHeading(heading);
+            telemetryBattery.setText(battery != -1 ? String.format("%d%%", battery) : "--");
+
+            if (battery != -1 && battery < 20) {
+                telemetryBattery.setTextColor(ContextCompat.getColor(this, R.color.accent_red_alert));
+            } else {
+                telemetryBattery.setTextColor(ContextCompat.getColor(this, R.color.text_grey_light));
+            }
+
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON parsing error: " + e.getMessage());
+        }
+    }
+
 
     // region BlunoLibrary Lifecycle
     @Override
@@ -269,5 +226,4 @@ public class MainActivity extends BlunoLibrary {
         onDestroyProcess();
     }
     // endregion
-}
 }
