@@ -25,6 +25,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
