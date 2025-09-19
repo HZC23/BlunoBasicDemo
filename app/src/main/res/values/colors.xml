@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0078FF</color>
+    <color name="colorPrimaryDark">#1E1E1E</color>
+    <color name="colorAccent">#0078FF</color>
+
+    <!-- App Palette -->
+    <color name="background_anthracite">#1E1E1E</color>
+    <color name="accent_electric_blue">#0078FF</color>
+    <color name="accent_green_status">#1DB954</color>
+    <color name="accent_red_alert">#FF3B30</color>
+    <color name="text_off_white">#F5F5F5</color>
+    <color name="text_grey_light">#CFCFCF</color>
+
+    <!-- UI Components -->
+    <color name="joystick_pad_background">#2A2A2A</color>
+    <color name="card_background_dark">#2E2E2E</color>
+    <color name="slider_bar_background">#444444</color>
+    <color name="console_background_matte">#121212</color>
+    <color name="console_text_info">#589DF6</color>
+    <color name="console_text_warning">#FF9F43</color>
+</resources>

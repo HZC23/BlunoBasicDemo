@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_anthracite"
+    tools:context=".MainActivity">
+
+    <!-- Top App Bar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/card_background_dark"
+        android:elevation="4dp">
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nono Controler"
+            android:textColor="@color/text_off_white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="16dp"/>
+
+        <Button
+            android:id="@+id/buttonScan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scan"
+            android:background="@drawable/button_action_background"
+            android:textColor="@color/text_off_white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="16dp"/>
+
+        <TextView
+            android:id="@+id/connectionStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Disconnected"
+            android:textColor="@color/accent_red_alert"
+            app:layout_constraintEnd_toStartOf="@id/buttonScan"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="16dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+
+        <!-- Left Panel: Controls -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Manual Controls -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manual Controls"
+                android:textColor="@color/text_off_white"
+                android:textSize="18sp"
+                android:layout_marginBottom="8dp"/>
+
+            <GridLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:rowCount="3"
+                android:layout_gravity="center_horizontal">
+
+                <View android:layout_width="80dp" android:layout_height="80dp"/>
+                <Button android:id="@+id/buttonMoveFwd" android:text="▲" android:layout_width="80dp" android:layout_height="80dp"/>
+                <View android:layout_width="80dp" android:layout_height="80dp"/>
+
+                <Button android:id="@+id/buttonMoveLeft" android:text="◀" android:layout_width="80dp" android:layout_height="80dp"/>
+                <Button android:id="@+id/buttonStop" android:text="STOP" android:layout_width="80dp" android:layout_height="80dp"/>
+                <Button android:id="@+id/buttonMoveRight" android:text="▶" android:layout_width="80dp" android:layout_height="80dp"/>
+
+                <View android:layout_width="80dp" android:layout_height="80dp"/>
+                <Button android:id="@+id/buttonMoveBwd" android:text="▼" android:layout_width="80dp" android:layout_height="80dp"/>
+                <View android:layout_width="80dp" android:layout_height="80dp"/>
+
+            </GridLayout>
+
+            <!-- Advanced Controls -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Advanced Controls"
+                android:textColor="@color/text_off_white"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Speed" android:textColor="@color/text_grey_light"/>
+                    <SeekBar android:id="@+id/seekBarSpeed" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:max="255" android:progress="150"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <EditText android:id="@+id/editTextHeading" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:hint="Enter Heading (0-359)" android:inputType="number" android:textColor="@color/text_off_white"/>
+                    <Button android:id="@+id/buttonGo" android:text="Go"/>
+                </LinearLayout>
+
+                <Switch
+                    android:id="@+id/switchLight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lights"
+                    android:textColor="@color/text_grey_light" />
+
+                <Button
+                    android:id="@+id/buttonCalibrate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Calibrate Compass"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Right Panel: Info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Telemetry Dashboard -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/infoCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/card_background_dark"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView android:id="@+id/telemetry_state" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="State: IDLE" android:textColor="@color/text_grey_light"/>
+                    <TextView android:id="@+id/telemetry_heading" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Heading: 0°" android:textColor="@color/text_grey_light"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Distance:" android:textColor="@color/text_grey_light"/>
+                    <ProgressBar android:id="@+id/progress_distance" style="@android:style/Widget.ProgressBar.Horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="100" android:progress="50"/>
+                    <TextView android:id="@+id/telemetry_battery" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Battery: 100%" android:textColor="@color/text_grey_light"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Console -->
+            <ScrollView
+                android:id="@+id/consoleScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/console_background_matte"
+                android:layout_marginTop="16dp"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/serialReceivedText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/text_grey_light"
+                    android.textSize="12sp"
+                    tools:text="[INFO] System Initialized
+[WARN] Battery low
+[ERROR] Connection failed"/>
+            </ScrollView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
