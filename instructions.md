@@ -1,3 +1,6 @@
+## ⚠️ NOTE IMPORTANTE
+**NE MODIFIES PAS LA VERSION DE GRADLE OU DES LIBS POUR LE BLUETHOOTH**
+
 # Feuille de Route pour le Développement de l'Application Android "NonoController"
 
 ## 1. Objectif du Projet

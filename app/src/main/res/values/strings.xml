@@ -2,4 +2,11 @@
     <string name="app_name">Nono controller</string>
     <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
     <string name="unknown_device">Unknown device</string>
+
+    <string name="state_format">State: %s</string>
+    <string name="heading_format">Heading: %d</string>
+    <string name="distance_format">Distance: %d cm</string>
+    <string name="distance_laser_format">Distance Laser: %d mm</string>
+    <string name="battery_format">Battery: %d%%</string>
+    <string name="speed_target_format">Speed Target: %d</string>
 </resources>
