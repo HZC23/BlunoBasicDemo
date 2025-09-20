@@ -28,6 +28,10 @@ Les commandes envoyées depuis l'application vers le robot doivent respecter un 
 | `CMD` | `TURN` | `<angle>` | Fait pivoter le robot d'un angle relatif (en degrés). |
 | `CMD` | `LIGHT`| `ON` / `OFF` | Allume ou éteint le phare avant. |
 | `CMD` | `CALIBRATE`| `COMPASS` | Démarre la procédure de calibration du magnétomètre. |
+| `CMD` | `TURRET_H`| `<0-180>` | Règle l'angle horizontal de la tourelle. |
+| `CMD` | `TURRET_V`| `<0-180>` | Règle l'angle vertical de la tourelle. |
+| `CMD` | `SCAN` | `H` | Démarre un scan horizontal de la tourelle. |
+| `CMD` | `SCAN` | `V` | Démarre un scan vertical de la tourelle. |
 
 **Exemple de code Arduino pour la réception :**
 ```cpp
