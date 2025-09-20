@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hzc23.nonocontroller">
+    package="com.hzc.nonocontroller">
 
 
     <!-- Declare this required feature if you want to make the app available to BLE-capable
@@ -14,6 +14,7 @@ PackageManager.hasSystemFeature(FEATURE_BLUETOOTH_LE) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
+        android:name=".NonoControllerApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -21,7 +22,7 @@ PackageManager.hasSystemFeature(FEATURE_BLUETOOTH_LE) -->
         android:theme="@style/AppTheme">
         <service android:name="com.hzc23.nonocontroller.BluetoothLeService" android:enabled="true"/>
         <activity
-            android:name="com.hzc23.nonocontroller.MainActivity"
+            android:name="com.hzc23.nonocontroller.ui.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">

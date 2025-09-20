@@ -27,6 +27,10 @@ android {
         }
     }
 
+    buildFeatures {
+        dataBinding true
+    }
+
     // 自定义打包名称
     android.applicationVariants.all { variant ->
         variant.outputs.all {
@@ -47,5 +51,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.3.1'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
 }

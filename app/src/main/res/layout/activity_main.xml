@@ -1,199 +1,265 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Top Bar -->
-    <TextView
-        android:id="@+id/textViewTitle"
-        style="@style/TitleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Nono Controller"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
+        <variable
+            name="viewModel"
+            type="com.hzc23.nonocontroller.viewmodel.MainViewModel" />
+    </data>
 
-    <ImageView
-        android:id="@+id/batteryIcon"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_battery"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
-
-    <TextView
-        android:id="@+id/telemetry_battery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="100%"
-        android:textColor="@color/text_secondary"
-        app:layout_constraintBottom_toBottomOf="@+id/batteryIcon"
-        app:layout_constraintStart_toEndOf="@+id/batteryIcon"
-        app:layout_constraintTop_toTopOf="@+id/batteryIcon" />
-
-    <Button
-        android:id="@+id/buttonScan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/button_selector"
-        android:text="Connect"
-        android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/settingsIcon"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:src="@android:drawable/ic_menu_manage"
-        app:layout_constraintEnd_toStartOf="@id/buttonScan"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Compass -->
-    <com.hzc23.nonocontroller.CompassView
-        android:id="@+id/compassView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/batteryIcon" />
-
-    <!-- D-Pad -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/dpad"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        tools:context=".ui.MainActivity"
+        tools:layout_editor_absoluteY="81dp"
+        tools:layout_editor_absoluteX="0dp"
+        android:screenOrientation="landscape">
 
-        <Button
-            android:id="@+id/buttonMoveFwd"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/ic_arrow_up"
-            app:layout_constraintEnd_toEndOf="parent"
+        <!-- Panneau 1: État de la Connexion -->
+        <TextView
+            android:id="@+id/connectionStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@{viewModel.connectionState}"
+            android:textColor="@android:color/white"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Disconnected" />
 
         <Button
-            android:id="@+id/buttonMoveBwd"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/ic_arrow_down"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/buttonMoveLeft"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/ic_arrow_left"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/buttonMoveRight"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/ic_arrow_right"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/buttonScan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:onClick="@{() -> viewModel.onScanClicked()}"
+            android:text="Scan"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/buttonStop"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/ic_stop"
+        <!-- Panneau 2: Contrôles Manuels -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/dpad"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/buttonMoveFwd"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/ic_arrow_up"
+                android:onClick="@{() -> viewModel.onMoveForward()}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/buttonMoveBwd"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/ic_arrow_down"
+                android:onClick="@{() -> viewModel.onMoveBackward()}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/buttonMoveLeft"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/ic_arrow_left"
+                android:onClick="@{() -> viewModel.onMoveLeft()}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/buttonMoveRight"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/ic_arrow_right"
+                android:onClick="@{() -> viewModel.onMoveRight()}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/buttonStop"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/ic_stop"
+                android:onClick="@{() -> viewModel.onStop()}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Panneau 3: Commandes Avancées -->
+        <LinearLayout
+            android:id="@+id/advancedCommands"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <SeekBar
+                android:id="@+id/speedSlider"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:max="255"
+                android:onStopTrackingTouch="@{(seekBar) -> viewModel.onSpeedChanged(seekBar.getProgress())}"
+                android:progress="@{viewModel.telemetry.speedTarget}" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/gotoAngle"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Angle"
+                    android:inputType="number"
+                    android:text="@={viewModel.gotoAngle}"
+                    android:textColor="@android:color/white" />
+
+                <Button
+                    android:id="@+id/buttonGo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{() -> viewModel.onGoToAngle()}"
+                    android:text="Go" />
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/lightSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onCheckedChanged="@{(switch, isChecked) -> viewModel.onLightChanged(isChecked)}"
+                android:text="Light"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/calibrateCompass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> viewModel.onCalibrateCompass()}"
+                android:text="Calibrate Compass" />
+        </LinearLayout>
+
+        <!-- Panneau 4: Dashboard de Télémétrie -->
+        <LinearLayout
+            android:id="@+id/telemetryDashboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/buttonScan"
+            app:layout_constraintStart_toEndOf="@+id/connectionStatus"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/telemetryState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{'State: ' + viewModel.telemetry.state}"
+                android:textColor="@android:color/white"
+                tools:text="State: UNKNOWN" />
+
+            <TextView
+                android:id="@+id/telemetryHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{'Heading: ' + viewModel.telemetry.heading}"
+                android:textColor="@android:color/white"
+                tools:text="Heading: 0" />
+
+            <TextView
+                android:id="@+id/telemetryDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{'Distance: ' + viewModel.telemetry.distance + ' cm'}"
+                android:textColor="@android:color/white"
+                tools:text="Distance: 0 cm" />
+
+            <ProgressBar
+                android:id="@+id/distanceProgressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="@{viewModel.telemetry.distance}" />
+
+            <TextView
+                android:id="@+id/telemetryDistanceLaser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{'Distance Laser: ' + viewModel.telemetry.distanceLaser + ' mm'}"
+                android:textColor="@android:color/white"
+                tools:text="Distance Laser: 0 mm" />
+
+            <TextView
+                android:id="@+id/telemetryBattery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{'Battery: ' + viewModel.telemetry.battery + '%'}"
+                android:textColor="@android:color/white"
+                tools:text="Battery: 100%" />
+
+            <TextView
+                android:id="@+id/telemetrySpeedTarget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{'Speed Target: ' + viewModel.telemetry.speedTarget}"
+                android:textColor="@android:color/white"
+                tools:text="Speed Target: 0" />
+
+            <ProgressBar
+                android:id="@+id/speedTargetProgressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:max="255"
+                android:progress="@{viewModel.telemetry.speedTarget}" />
+
+        </LinearLayout>
+
+        <!-- Panneau 5: Moniteur Série -->
+        <ScrollView
+            android:id="@+id/serialMonitorScrollView"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/advancedCommands"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/dpad">
+
+            <TextView
+                android:id="@+id/serialMonitor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="@{viewModel.serialMonitor}"
+                android:textColor="@android:color/white"
+                tools:text="Serial Monitor" />
+        </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- Mode Buttons -->
-    <LinearLayout
-        android:id="@+id/modeButtons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/speedSlider"
-        app:layout_constraintEnd_toEndOf="@+id/dpad">
-
-        <Button
-            android:id="@+id/buttonManuel"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_selector"
-            android:text="Manuel" />
-
-        <Button
-            android:id="@+id/buttonAuto"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_selector"
-            android:text="Auto" />
-
-        <Button
-            android:id="@+id/buttonObstacle"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_selector"
-            android:text="Obstacle" />
-
-        <Button
-            android:id="@+id/buttonPIR"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_selector"
-            android:text="PIR" />
-
-        <Button
-            android:id="@+id/buttonCap"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_selector"
-            android:text="Cap" />
-
-    </LinearLayout>
-
-    <!-- Speed Slider -->
-    <SeekBar
-        android:id="@+id/speedSlider"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:max="255"
-        android:progress="150"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
