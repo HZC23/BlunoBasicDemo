@@ -63,7 +63,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Compass -->
-    <com.dfrobot.angelo.blunobasicdemo.CompassView
+    <com.hzc23.nonocontroller.CompassView
         android:id="@+id/compassView"
         android:layout_width="200dp"
         android:layout_height="200dp"
