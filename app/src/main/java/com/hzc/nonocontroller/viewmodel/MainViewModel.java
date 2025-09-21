@@ -100,4 +100,8 @@ public class MainViewModel extends ViewModel {
     public void onObstacleModeSelected() {
         robotRepository.sendCommand("obstacle\n");
     }
+
+    public void onClearLogClicked() {
+        robotRepository.clearSerialMonitor();
+    }
 }

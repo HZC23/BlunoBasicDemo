@@ -9,63 +9,222 @@
             type="com.hzc.nonocontroller.viewmodel.MainViewModel" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:padding="8dp">
 
-        <TextView
-            android:id="@+id/telemetryState"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text_primary"
-            android:text="@{@string/state_format(viewModel.telemetry.state)}"
-            tools:text="State: UNKNOWN" />
-
-        <TextView
-            android:id="@+id/telemetryHeading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <!-- Compass View -->
+        <com.hzc.nonocontroller.CompassView
+            android:id="@+id/compassView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginTop="8dp"
-            android:textColor="@color/text_primary"
-            android:text="@{@string/heading_format(viewModel.telemetry.heading)}"
-            tools:text="Heading: 0" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:heading="@{viewModel.telemetry.heading}" />
 
-        <TextView
-            android:id="@+id/telemetryDistance"
-            android:layout_width="wrap_content"
+        <!-- Telemetry Data -->
+        <LinearLayout
+            android:id="@+id/telemetryDataLayout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/text_primary"
-            android:text="@{@string/distance_format(viewModel.telemetry.distance)}"
-            tools:text="Distance: 0 cm" />
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/compassView">
 
-        <ProgressBar
-            android:id="@+id/distanceProgressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:max="100"
-            android:progress="@{viewModel.telemetry.distance}" />
+            <!-- State -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_sensor"
+                    android:tint="@color/text_secondary"
+                    android:contentDescription="Robot State" />
+                <TextView
+                    android:id="@+id/telemetryState"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/text_primary"
+                    android:text="@{@string/state_format(viewModel.telemetry.state)}"
+                    tools:text="State: UNKNOWN" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/telemetryDistanceLaser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/text_primary"
-            android:text="@{@string/distance_laser_format(viewModel.telemetry.distanceLaser)}"
-            tools:text="Distance Laser: 0 mm" />
+            <!-- Heading (Text, as CompassView handles visual) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_arrow_up"
+                    android:tint="@color/text_secondary"
+                    android:contentDescription="Heading" />
+                <TextView
+                    android:id="@+id/telemetryHeading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/text_primary"
+                    android:text="@{@string/heading_format(viewModel.telemetry.heading)}"
+                    tools:text="Heading: 0°" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/telemetryBattery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/text_primary"
-            android:text="@{@string/battery_format(viewModel.telemetry.battery)}"
-            tools:text="Battery: 100%" />
+            <!-- Distance (Ultrasonic) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_sensor"
+                    android:tint="@color/text_secondary"
+                    android:contentDescription="Distance Ultrasonic" />
+                <TextView
+                    android:id="@+id/telemetryDistance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/text_primary"
+                    android:text="@{@string/distance_format(viewModel.telemetry.distance)}"
+                    tools:text="Distance: 0 cm" />
+            </LinearLayout>
+            <ProgressBar
+                android:id="@+id/distanceProgressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:max="100"
+                app:distanceProgressTint="@{viewModel.telemetry.distance}"
+                android:progressBackgroundTint="@color/text_secondary"
+                android:progress="@{viewModel.telemetry.distance}" />
 
-    </LinearLayout>
+            <!-- Distance (Laser) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_sensor"
+                    android:tint="@color/text_secondary"
+                    android:contentDescription="Distance Laser" />
+                <TextView
+                    android:id="@+id/telemetryDistanceLaser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/text_primary"
+                    android:text="@{@string/distance_laser_format(viewModel.telemetry.distanceLaser)}"
+                    tools:text="Distance Laser: 0 mm" />
+            </LinearLayout>
+
+            <!-- Battery -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+                <ImageView
+                    android:id="@+id/batteryIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    app:batteryIcon="@{viewModel.telemetry.battery}"
+                    android:contentDescription="Battery Level" />
+                <TextView
+                    android:id="@+id/telemetryBattery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/text_primary"
+                    android:text="@{@string/battery_format(viewModel.telemetry.battery)}"
+                    tools:text="Battery: 100%" />
+            </LinearLayout>
+
+            <!-- Speed -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_speed"
+                    android:tint="@color/text_secondary"
+                    android:contentDescription="Target Speed" />
+                <TextView
+                    android:id="@+id/telemetrySpeedTarget"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/text_primary"
+                    android:text='@{@string/speed_target_format(viewModel.telemetry.speedTarget)}'
+                    tools:text="Target Speed: 0" />
+            </LinearLayout>
+            <ProgressBar
+                android:id="@+id/speedTargetProgressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:max="255"
+                android:progressTint="@color/colorAccent"
+                android:progressBackgroundTint="@color/text_secondary"
+                android:progress="@{viewModel.telemetry.speedTarget}" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_speed"
+                    android:tint="@color/text_secondary"
+                    android:contentDescription="Current Speed" />
+                <TextView
+                    android:id="@+id/telemetrySpeedCurrent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/text_primary"
+                    android:text='@{@string/speed_current_format(viewModel.telemetry.speedCurrent)}'
+                    tools:text="Current Speed: 0" />
+            </LinearLayout>
+            <ProgressBar
+                android:id="@+id/speedCurrentProgressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:max="255"
+                android:progressTint="@color/colorAccent"
+                android:progressBackgroundTint="@color/text_secondary"
+                android:progress="@{viewModel.telemetry.speedCurrent}" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

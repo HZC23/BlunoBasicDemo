@@ -100,6 +100,11 @@ public class RobotRepository implements BleManager.BleManagerListener {
         serialBuffer = new StringBuilder(bufferContent);
     }
 
+    public void clearSerialMonitor() {
+        serialBuffer = new StringBuilder();
+        serialMonitor.postValue("");
+    }
+
     @Override
     public void onServicesDiscovered() {
         bleManager.onServicesDiscovered();

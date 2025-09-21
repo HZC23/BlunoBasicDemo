@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -8,18 +9,40 @@
             type="com.hzc.nonocontroller.viewmodel.MainViewModel" />
     </data>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-        <TextView
-            android:id="@+id/serialMonitor"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/clearLogButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:text="@{viewModel.serialMonitor}"
-            android:textColor="@color/text_secondary"
-            tools:text="Serial Monitor Log..." />
+            android:text="Clear Log"
+            android:textColor="@color/colorAccent"
+            android:layout_gravity="end"
+            android:onClick="@{() -> viewModel.onClearLogClicked()}" />
 
-    </ScrollView>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_card_background">
+
+            <TextView
+                android:id="@+id/serialMonitor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:padding="8dp"
+                android:text="@{viewModel.serialMonitor}"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                tools:text="Serial Monitor Log..." />
+
+        </ScrollView>
+    </LinearLayout>
 </layout>

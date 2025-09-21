@@ -7,4 +7,5 @@ public class Telemetry {
   public int distanceLaser = 0;
   public int battery = 0;
   public int speedTarget = 0;
+  public int speedCurrent = 0;
 }

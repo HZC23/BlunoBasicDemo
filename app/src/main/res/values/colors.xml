@@ -18,4 +18,8 @@
     <color name="accent_red_alert">#DC3545</color>
     <color name="card_background_dark">#2C2C2C</color>
     <color name="joystick_pad_background">#80333333</color>
+
+    <color name="green">#4CAF50</color>
+    <color name="orange">#FF9800</color>
+    <color name="red">#F44336</color>
 </resources>
