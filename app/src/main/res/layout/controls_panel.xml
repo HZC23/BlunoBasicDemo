@@ -118,7 +118,7 @@
 
         <!-- Other Controls Card -->
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_match"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/surface"
             app:strokeWidth="0dp"

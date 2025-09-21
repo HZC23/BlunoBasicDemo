@@ -44,23 +44,28 @@ public class BindingAdapters {
     public static void setConnectionStatusIcon(ImageView imageView, String connectionState) {
         int drawableResId;
         int tintColor;
-        switch (connectionState) {
-            case "IS_CONNECTED":
-                drawableResId = R.drawable.ic_ble_connected;
-                tintColor = R.color.green;
-                break;
-            case "IS_SCANNING":
-                drawableResId = R.drawable.ic_ble_scanning;
-                tintColor = R.color.accent_electric_blue; // Using an existing blue color
-                break;
-            case "IS_CONNECTING":
-                drawableResId = R.drawable.ic_ble_scanning; // Can use scanning icon for connecting
-                tintColor = R.color.accent_electric_blue;
-                break;
-            default: // IS_TO_SCAN, IS_DISCONNECTING, NULL
-                drawableResId = R.drawable.ic_ble_disconnected;
-                tintColor = R.color.red;
-                break;
+        if (connectionState == null) {
+            drawableResId = R.drawable.ic_ble_disconnected;
+            tintColor = R.color.red;
+        } else {
+            switch (connectionState) {
+                case "IS_CONNECTED":
+                    drawableResId = R.drawable.ic_ble_connected;
+                    tintColor = R.color.green;
+                    break;
+                case "IS_SCANNING":
+                    drawableResId = R.drawable.ic_ble_scanning;
+                    tintColor = R.color.accent_electric_blue; // Using an existing blue color
+                    break;
+                case "IS_CONNECTING":
+                    drawableResId = R.drawable.ic_ble_scanning; // Can use scanning icon for connecting
+                    tintColor = R.color.accent_electric_blue;
+                    break;
+                default: // IS_TO_SCAN, IS_DISCONNECTING
+                    drawableResId = R.drawable.ic_ble_disconnected;
+                    tintColor = R.color.red;
+                    break;
+            }
         }
         imageView.setImageResource(drawableResId);
         imageView.setColorFilter(imageView.getContext().getResources().getColor(tintColor), PorterDuff.Mode.SRC_IN);

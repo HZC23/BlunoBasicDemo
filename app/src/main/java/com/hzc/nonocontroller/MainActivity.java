@@ -1,129 +1,133 @@
 package com.hzc.nonocontroller;
 
-import android.Manifest;
-import android.os.Build;
+import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.content.Intent;
+import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
-import androidx.lifecycle.ViewModelProvider;
-import com.google.android.material.tabs.TabLayout;
-import com.hzc.nonocontroller.data.RobotRepository;
-import com.hzc.nonocontroller.databinding.ActivityMainBinding;
-import com.hzc.nonocontroller.databinding.ControlsPanelBinding;
-import com.hzc.nonocontroller.databinding.LogPanelBinding;
-import com.hzc.nonocontroller.databinding.TelemetryPanelBinding;
-import com.hzc.nonocontroller.viewmodel.MainViewModel;
-import com.hzc.nonocontroller.widget.JoystickView;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.List;
 
-    private MainViewModel viewModel;
-    private ActivityMainBinding binding;
+public class MainActivity  extends BlunoLibrary {
+	private Button buttonScan;
+	private Button buttonSerialSend;
+	private EditText serialSendText;
+	private TextView serialReceivedText;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
 
+		request(1000, new OnPermissionsResult() {
+			@Override
+			public void OnSuccess() {
+				Toast.makeText(MainActivity.this,"权限请求成功",Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void OnFail(List<String> noPermissions) {
+				Toast.makeText(MainActivity.this,"权限请求失败",Toast.LENGTH_SHORT).show();
+			}
+		});
+
+        onCreateProcess();														//onCreate Process by BlunoLibrary
+
+
+        serialBegin(115200);													//set the Uart Baudrate on BLE chip to 115200
+
+        serialReceivedText=(TextView) findViewById(R.id.serialReveicedText);	//initial the EditText of the received data
+        serialSendText=(EditText) findViewById(R.id.serialSendText);			//initial the EditText of the sending data
+
+        buttonSerialSend = (Button) findViewById(R.id.buttonSerialSend);		//initial the button for sending the data
+        buttonSerialSend.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+
+				serialSend(serialSendText.getText().toString());				//send the data to the BLUNO
+			}
+		});
+
+        buttonScan = (Button) findViewById(R.id.buttonScan);					//initial the button for scanning the BLE device
+        buttonScan.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+
+				buttonScanOnClickProcess();										//Alert Dialog for selecting the BLE device
+			}
+		});
+	}
+
+	protected void onResume(){
+		super.onResume();
+		System.out.println("BlUNOActivity onResume");
+		onResumeProcess();														//onResume Process by BlunoLibrary
+	}
+	
+	
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		onActivityResultProcess(requestCode, resultCode, data);					//onActivityResult Process by BlunoLibrary
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        
-
-        // Set up ViewModel and DataBinding
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-
-        // Set fullscreen
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            final WindowInsetsController insetsController = getWindow().getInsetsController();
-            if (insetsController != null) {
-                insetsController.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
-                insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-            }
-        } else {
-            getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-        }
-
-        // Initialize RobotRepository
-        RobotRepository.getInstance().init(this);
-
-        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        binding.setViewModel(viewModel);
-        binding.setLifecycleOwner(this);
-
-        // Request Bluetooth permissions
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1000);
-
-        // Setup UI
-        setupJoystick();
-        setupTabs();
+    protected void onPause() {
+        super.onPause();
+        onPauseProcess();														//onPause Process by BlunoLibrary
+    }
+	
+	protected void onStop() {
+		super.onStop();
+		onStopProcess();														//onStop Process by BlunoLibrary
+	}
+    
+	@Override
+    protected void onDestroy() {
+        super.onDestroy();	
+        onDestroyProcess();														//onDestroy Process by BlunoLibrary
     }
 
-    private void setupJoystick() {
-        binding.joystick.setJoystickListener(new JoystickView.JoystickListener() {
-            @Override
-            public void onJoystickMoved(float xPercent, float yPercent, int angle, int strength) {
-                viewModel.onJoystickMoved(angle, strength);
-            }
-        });
-    }
+	@Override
+	public void onConectionStateChange(connectionStateEnum theConnectionState) {//Once connection state changes, this function will be called
+		switch (theConnectionState) {											//Four connection state
+		case isConnected:
+			buttonScan.setText("Connected");
+			break;
+		case isConnecting:
+			buttonScan.setText("Connecting");
+			break;
+		case isToScan:
+			buttonScan.setText("Scan");
+			break;
+		case isScanning:
+			buttonScan.setText("Scanning");
+			break;
+		case isDisconnecting:
+			buttonScan.setText("isDisconnecting");
+			break;
+		default:
+			break;
+		}
+	}
 
-    private void setupTabs() {
-        // Select first tab by default
-        updateInfoContent(binding.infoTabs.getTabAt(0));
+	@Override
+	public void onSerialReceived(String theString) {							//Once connection data received, this function will be called
+		// TODO Auto-generated method stub
+		serialReceivedText.append(theString);							//append the text into the EditText
+		//The Serial data from the BLUNO may be sub-packaged, so using a buffer to hold the String is a good choice.
+		((ScrollView)serialReceivedText.getParent()).fullScroll(View.FOCUS_DOWN);
+	}
 
-        binding.infoTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                updateInfoContent(tab);
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) { }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) { }
-        });
-    }
-
-    private void updateInfoContent(TabLayout.Tab tab) {
-        binding.infoContent.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(this);
-
-        if (tab.getPosition() == 0) { // Telemetry
-            TelemetryPanelBinding telemetryBinding = DataBindingUtil.inflate(inflater, R.layout.telemetry_panel, binding.infoContent, true);
-            telemetryBinding.setViewModel(viewModel);
-            telemetryBinding.setLifecycleOwner(this);
-        } else if (tab.getPosition() == 1) { // Controls
-            ControlsPanelBinding controlsBinding = DataBindingUtil.inflate(inflater, R.layout.controls_panel, binding.infoContent, true);
-            controlsBinding.setViewModel(viewModel);
-            controlsBinding.setLifecycleOwner(this);
-        } else { // Log
-            LogPanelBinding logBinding = DataBindingUtil.inflate(inflater, R.layout.log_panel, binding.infoContent, true);
-            logBinding.setViewModel(viewModel);
-            logBinding.setLifecycleOwner(this);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1000) {
-            if (grantResults.length > 0 && grantResults[0] == getPackageManager().PERMISSION_GRANTED) {
-                // Permission granted
-            } else {
-                Toast.makeText(this, "Bluetooth permissions are required to connect to the robot.", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
 }

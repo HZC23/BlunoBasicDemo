@@ -19,6 +19,9 @@ Le panneau des commandes avancées doit être réorganisé pour inclure les nouv
     *   **"Mode Manuel"**: Envoie la commande `CMD:MODE:MANUAL\n`. Ce bouton doit être sélectionné par défaut au démarrage.
     *   **"Mode Évitement"**: Envoie la commande `CMD:MODE:AVOID\n`.
     *   **"Mode Sentinelle"**: Envoie la commande `CMD:MODE:SENTRY\n`.
+    *   **Mode Cap** : Envoie la commande `CMD:MODE:FOLLOW_HEADING\n`.
+
+
 *   **Comportement :** Ces 3 boutons doivent fonctionner comme un groupe de boutons radio (un seul peut être actif à la fois). L'état actif doit être clairement visible dans l'interface.
 
 ### 2. Mise à jour du Panneau 2 : "Contrôles Manuels" (Comportement Dynamique)

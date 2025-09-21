@@ -33,72 +33,107 @@ public class MainViewModel extends ViewModel {
     }
 
     public void onMoveForward() {
-        robotRepository.sendCommand("U\n");
+        robotRepository.sendCommand("CMD:MOVE:FWD\n");
     }
 
     public void onMoveBackward() {
-        robotRepository.sendCommand("D\n");
+        robotRepository.sendCommand("CMD:MOVE:BWD\n");
     }
 
     public void onMoveLeft() {
-        robotRepository.sendCommand("L\n");
+        robotRepository.sendCommand("CMD:MOVE:LEFT\n");
     }
 
     public void onMoveRight() {
-        robotRepository.sendCommand("R\n");
+        robotRepository.sendCommand("CMD:MOVE:RIGHT\n");
     }
 
     public void onStop() {
-        robotRepository.sendCommand("stop\n");
+        robotRepository.sendCommand("CMD:MOVE:STOP\n");
     }
 
     public void onSpeedChanged(int speed) {
-        robotRepository.sendCommand("vitesse " + speed + "\n");
+        robotRepository.sendCommand("CMD:SPEED:" + speed + "\n");
     }
 
     public void onGoToAngle() {
         String angle = gotoAngle.getValue();
         if (angle != null && !angle.isEmpty()) {
-            robotRepository.sendCommand("virageprecis " + angle + "\n");
+            robotRepository.sendCommand("CMD:GOTO:" + angle + "\n");
         }
     }
 
     public void onLightChanged(boolean isChecked) {
-        String command = isChecked ? "on\n" : "off\n";
+        String command = isChecked ? "CMD:LIGHT:ON\n" : "CMD:LIGHT:OFF\n";
         robotRepository.sendCommand(command);
     }
 
     public void onCalibrateCompass() {
-        robotRepository.sendCommand("calibrer\n");
+        robotRepository.sendCommand("CMD:CALIBRATE:COMPASS\n");
     }
 
-    public void onJoystickMoved(int angle, int strength) {
-        if (strength < 20) {
-            onStop();
-            return;
+    public void onDirectionalButtonClicked(String direction) {
+        Telemetry telemetry = getTelemetry().getValue();
+        if (telemetry != null) {
+            String state = telemetry.state;
+            if (state != null && (state.equals("FOLLOW_HEADING") || state.equals("MAINTAIN_HEADING"))) {
+                switch (direction) {
+                    case "up":
+                        robotRepository.sendCommand("CMD:MOVE:FWD\n");
+                        break;
+                    case "down":
+                        robotRepository.sendCommand("CMD:MOVE:BWD\n");
+                        break;
+                    case "left":
+                        robotRepository.sendCommand("CMD:MOVE:LEFT\n");
+                        break;
+                    case "right":
+                        robotRepository.sendCommand("CMD:MOVE:RIGHT\n");
+                        break;
+                }
+                return;
+            }
         }
 
-        if (angle > 45 && angle <= 135) {
-            onMoveRight();
-        } else if (angle > 135 && angle <= 225) {
-            onMoveBackward();
-        } else if (angle > 225 && angle <= 315) {
-            onMoveLeft();
-        } else {
-            onMoveForward();
+        // Default behavior
+        switch (direction) {
+            case "up":
+                robotRepository.sendCommand("CMD:MOVE:FWD\n");
+                break;
+            case "down":
+                robotRepository.sendCommand("CMD:MOVE:BWD\n");
+                break;
+            case "left":
+                robotRepository.sendCommand("CMD:MOVE:LEFT\n");
+                break;
+            case "right":
+                robotRepository.sendCommand("CMD:MOVE:RIGHT\n");
+                break;
         }
+    }
+
+    public void onStopButtonClicked() {
+        robotRepository.sendCommand("CMD:MOVE:STOP\n");
     }
 
     public void onManualModeSelected() {
-        robotRepository.sendCommand("manual\n");
+        robotRepository.sendCommand("CMD:MODE:MANUAL\n");
     }
 
-    public void onAutoModeSelected() {
-        robotRepository.sendCommand("auto\n");
+    public void onAvoidModeSelected() {
+        robotRepository.sendCommand("CMD:MODE:AVOID\n");
     }
 
-    public void onObstacleModeSelected() {
-        robotRepository.sendCommand("obstacle\n");
+    public void onSentryModeSelected() {
+        robotRepository.sendCommand("CMD:MODE:SENTRY\n");
+    }
+
+    public void onScanStart() {
+        robotRepository.sendCommand("CMD:SCAN:START\n");
+    }
+
+    public void onTurretCenter() {
+        robotRepository.sendCommand("CMD:TURRET:CENTER\n");
     }
 
     public void onClearLogClicked() {

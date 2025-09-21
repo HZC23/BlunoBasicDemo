@@ -15,17 +15,90 @@
         android:background="@drawable/background_gradient"
         tools:context=".ui.MainActivity">
 
-        <!-- Joystick on the left -->
-        <com.hzc.nonocontroller.widget.JoystickView
-            android:id="@+id/joystick"
+        <!-- Directional controls on the left -->
+        <LinearLayout
+            android:id="@+id/directional_controls"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="32dp"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.35" />
+            app:layout_constraintWidth_percent="0.35" >
+
+            <!-- Directional Buttons -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/button_up"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:src="@drawable/ic_arrow_up"
+                    android:onClick="@{() -> viewModel.onDirectionalButtonClicked(&quot;up&quot;)}"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/button_stop"
+                    app:layout_constraintDimensionRatio="1:1" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/button_down"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:srcCompat="@{viewModel.telemetry.state.equals(&quot;FOLLOW_HEADING&quot;) || viewModel.telemetry.state.equals(&quot;MAINTAIN_HEADING&quot;) ? @drawable/ic_stop : @drawable/ic_arrow_down}"
+                    android:onClick="@{() -> viewModel.onDirectionalButtonClicked(&quot;down&quot;)}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/button_stop"
+                    app:layout_constraintDimensionRatio="1:1" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/button_left"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:srcCompat="@{viewModel.telemetry.state.equals(&quot;FOLLOW_HEADING&quot;) || viewModel.telemetry.state.equals(&quot;MAINTAIN_HEADING&quot;) ? @drawable/ic_rotate_left : @drawable/ic_arrow_left}"
+                    android:onClick="@{() -> viewModel.onDirectionalButtonClicked(&quot;left&quot;)}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/button_stop"
+                    app:layout_constraintDimensionRatio="1:1" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/button_right"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:onClick="@{() -> viewModel.onDirectionalButtonClicked(&quot;right&quot;)}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/button_stop"
+                    app:layout_constraintDimensionRatio="1:1" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/button_stop"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:src="@drawable/ic_stop"
+                    android:onClick="@{() -> viewModel.onStopButtonClicked()}"
+                    app:layout_constraintCircle="@+id/directional_controls"
+                    app:layout_constraintCircleRadius="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintWidth_percent="0.33"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
 
         <!-- Vertical ScrollView for controls on the right -->
         <ScrollView
@@ -34,7 +107,7 @@
             android:layout_margin="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/joystick"
+            app:layout_constraintStart_toEndOf="@+id/directional_controls"
             app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
@@ -83,7 +156,7 @@
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> viewModel.onScanClicked()}"
                             android:text="Scan / Connect"
-                            android:textColor="@color/white"
+                            android:textColor="@color/text_primary"
                             android:backgroundTint="@color/colorAccent"
                             app:cornerRadius="8dp"/>
                     </LinearLayout>
@@ -129,22 +202,22 @@
                                 android:buttonTint="@color/colorAccent"/>
 
                             <RadioButton
-                                android:id="@+id/mode_auto"
+                                android:id="@+id/mode_avoid"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
-                                android:onClick="@{() -> viewModel.onAutoModeSelected()}"
-                                android:text="Auto"
+                                android:onClick="@{() -> viewModel.onAvoidModeSelected()}"
+                                android:text="Avoid"
                                 android:textColor="@color/text_secondary"
                                 android:buttonTint="@color/colorAccent"/>
 
                             <RadioButton
-                                android:id="@+id/mode_obstacle"
+                                android:id="@+id/mode_sentry"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
-                                android:onClick="@{() -> viewModel.onObstacleModeSelected()}"
-                                android:text="Obstacle"
+                                android:onClick="@{() -> viewModel.onSentryModeSelected()}"
+                                android:text="Sentry"
                                 android:textColor="@color/text_secondary"
                                 android:buttonTint="@color/colorAccent"/>
                         </RadioGroup>
@@ -185,6 +258,10 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Log"/>
+                            <com.google.android.material.tabs.TabItem
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Turret"/>
                         </com.google.android.material.tabs.TabLayout>
 
                         <!-- Content for tabs will be managed in the Activity -->
