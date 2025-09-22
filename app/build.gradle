@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    compileSdkVersion 31
+    buildToolsVersion '31.0.0'
     lintOptions {
         abortOnError false
     }
@@ -41,10 +41,6 @@ android {
 
 
 dependencies {
-//    compile fileTree(dir: 'libs', include: ['*.jar'])
-//    testCompile 'junit:junit:4.12'
-//    compile 'com.android.support:appcompat-v7:21.0.3'
-
     implementation fileTree(dir: 'libs', includes: ['*.jar'])
     testImplementation 'junit:junit:4.12'
     //noinspection GradleCompatible
@@ -54,6 +50,9 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-livedata:2.3.1'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.google.android.material:material:1.4.0'
+
+    // Updated Material Design library for M3 components
+    implementation 'com.google.android.material:material:1.6.1'
+
 
 }
