@@ -25,7 +25,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements BlunoLibrary.BlunoLibraryDelegate {
+public class MainActivity extends AppCompatActivity implements BlunoLibraryDelegate {
     private ActivityMainBinding binding;
     private MainViewModel viewModel;
     private BlunoLibrary blunoLibrary;
@@ -146,6 +146,10 @@ public class MainActivity extends AppCompatActivity implements BlunoLibrary.Blun
             if (json.has("speedCurrent")) currentTelemetry.setSpeedCurrent(json.getInt("speedCurrent"));
 
             viewModel.updateTelemetry(currentTelemetry);
+        } catch (JSONException e) {
+            // Not a JSON string, log it.
+        }
+    }
 
     private void setupDirectionalButton(int buttonId, final String direction) {
         ImageButton button = findViewById(buttonId);
