@@ -10,4 +10,8 @@
     <string name="battery_format">Battery: %d%%</string>
     <string name="speed_target_format">Speed Target: %d</string>
     <string name="speed_current_format">Speed Current: %d</string>
+
+    <string name="status_connected">Connected</string>
+    <string name="status_connecting">Connecting...</string>
+    <string name="status_disconnected">Disconnected</string>
 </resources>

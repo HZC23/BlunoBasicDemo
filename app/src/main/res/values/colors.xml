@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#BB86FC</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC6</color>
-    <color name="colorError">#CF6679</color>
+    <color name="colorPrimary">#007AFF</color> <!-- A vibrant electric blue for primary actions and branding -->
+    <color name="colorPrimaryDark">#005BBF</color> <!-- Darker shade for status bar and deeper elements -->
+    <color name="colorAccent">#007AFF</color> <!-- Accent color, matching primary for consistency -->
+    <color name="colorError">#E53935</color> <!-- Error color -->
 
     <color name="background">#121212</color>
     <color name="surface">#1E1E1E</color>
 
     <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#B3FFFFFF</color>
+    <color name="text_secondary">#B3B3B3</color>
 
     <color name="button_background">@color/colorPrimary</color>
     <color name="button_text">#000000</color>

@@ -18,6 +18,8 @@
         <!-- Explicitly set on-colors for dark theme -->
         <item name="colorOnSurface">@color/text_primary</item>
         <item name="colorOnBackground">@color/text_primary</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <!-- Define custom text appearance styles -->
