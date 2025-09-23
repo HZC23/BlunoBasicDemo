@@ -10,31 +10,94 @@
         <import type="android.view.View"/>
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="horizontal"
         android:background="?attr/colorSurface"
         tools:context=".MainActivity">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorSurface"
-            app:elevation="0dp">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:title="@string/app_name"
-                app:menu="@menu/menu_main" />
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
+        <!-- Left Panel: Controls -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manual Control"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:layout_marginBottom="16dp"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_gravity="center_horizontal">
+
+                <ImageButton
+                    android:id="@+id/button_up"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_arrow_up"
+                    android:background="@drawable/button_selector"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/button_down"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_arrow_down"
+                    android:background="@drawable/button_selector"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/button_left"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_arrow_left"
+                    android:background="@drawable/button_selector"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/button_right"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:background="@drawable/button_selector"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Button
+                android:id="@+id/button_stop"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="STOP"
+                android:onClick="@{() -> viewModel.onStopButtonClicked()}"
+                app:icon="@drawable/ic_stop"
+                />
+        </LinearLayout>
+
+        <!-- Right Panel: Status, Modes, and Accessories -->
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.2">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -47,48 +110,54 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardElevation="4dp">
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="16dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Status"
-                            android:textAppearance="?attr/textAppearanceHeadline6" />
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:layout_marginTop="8dp"
                             android:gravity="center_vertical">
-
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="Status"
+                                android:textAppearance="?attr/textAppearanceHeadline6" />
+                            <Button
+                                android:id="@+id/button_scan"
+                                style="@style/Widget.MaterialComponents.Button.TextButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Scan"
+                                android:onClick="@{() -> viewModel.onScanClicked()}"
+                                app:icon="@drawable/ic_bluetooth"/>
+                        </LinearLayout>
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnCount="2"
+                            android:layout_marginTop="8dp">
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 app:connectionStatusIcon="@{viewModel.connectionState}"
                                 tools:src="@drawable/ic_ble_disconnected"/>
-
                             <TextView
-                                android:layout_width="0dp"
-                                android:layout_weight="1"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
                                 app:connectionStateText="@{viewModel.connectionState}"
                                 android:textAppearance="?attr/textAppearanceBody1"
                                 tools:text="Disconnected"/>
-
-                             <ImageView
+                            <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_marginStart="16dp"
                                 app:batteryIcon="@{viewModel.telemetry.battery}"
                                 tools:src="@drawable/ic_battery_full"/>
-
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -96,24 +165,22 @@
                                 android:text="@{String.valueOf(viewModel.telemetry.battery) + '%'}"
                                 android:textAppearance="?attr/textAppearanceBody1"
                                 tools:text="100%"/>
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="@{`State: ` + viewModel.telemetry.state}"
-                            android:textAppearance="?attr/textAppearanceBody2"
-                            tools:text="State: IDLE"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@{`Heading: ` + viewModel.telemetry.heading + `°`}"
-                            android:textAppearance="?attr/textAppearanceBody2"
-                            tools:text="Heading: 90°"/>
-
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text='@{"State: " + viewModel.telemetry.state}'
+                                android:textAppearance="?attr/textAppearanceBody2"
+                                tools:text="State: IDLE"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginStart="8dp"
+                                android:text='@{"Heading: " + viewModel.telemetry.heading + "°"}'
+                                android:textAppearance="?attr/textAppearanceBody2"
+                                tools:text="Heading: 90°"/>
+                        </GridLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -123,19 +190,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     app:cardElevation="4dp">
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="16dp">
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Control Mode"
                             android:textAppearance="?attr/textAppearanceHeadline6" />
-
                         <com.google.android.material.button.MaterialButtonToggleGroup
                             android:id="@+id/mode_toggle_group"
                             android:layout_width="match_parent"
@@ -143,11 +207,10 @@
                             android:layout_marginTop="8dp"
                             app:singleSelection="true"
                             app:selectionRequired="true"
-                            android:checkedButton="@{viewModel.isManualMode ? @id/mode_manual_button : @id/mode_auto_button}"
-                            >
+                            android:checkedButton="@{viewModel.isManualMode ? @id/mode_manual_button : @id/mode_auto_button}">
                             <Button
                                 android:id="@+id/mode_manual_button"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                style="?android:attr/buttonStyleSmall"
                                 android:layout_width="0dp"
                                 android:layout_weight="1"
                                 android:layout_height="wrap_content"
@@ -155,96 +218,17 @@
                                 android:onClick="@{() -> viewModel.onManualModeSelected()}"/>
                             <Button
                                 android:id="@+id/mode_auto_button"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                style="?android:attr/buttonStyleSmall"
                                 android:layout_width="0dp"
                                 android:layout_weight="1"
                                 android:layout_height="wrap_content"
                                 android:text="Auto"
                                 android:onClick="@{() -> viewModel.onAutoModeSelected()}"/>
                         </com.google.android.material.button.MaterialButtonToggleGroup>
-
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Manual Control Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:visibility="@{viewModel.isManualMode ? View.VISIBLE : View.GONE}"
-                    app:cardElevation="4dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-                        
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Manual Control"
-                            android:textAppearance="?attr/textAppearanceHeadline6" />
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="200dp"
-                            android:layout_height="200dp"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="16dp">
-
-                            <ImageButton
-                                android:id="@+id/button_up"
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
-                                android:src="@drawable/ic_arrow_up"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent" />
-
-                            <ImageButton
-                                android:id="@+id/button_down"
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
-                                android:src="@drawable/ic_arrow_down"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent" />
-
-                            <ImageButton
-                                android:id="@+id/button_left"
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
-                                android:src="@drawable/ic_arrow_left"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent" />
-
-                            <ImageButton
-                                android:id="@+id/button_right"
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
-                                android:src="@drawable/ic_arrow_right"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                        
-                        <Button
-                            android:id="@+id/button_stop"
-                            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="16dp"
-                            android:text="STOP"
-                            android:onClick="@{() -> viewModel.onStopButtonClicked()}"
-                            app:icon="@drawable/ic_stop"
-                            />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Auto Control Card -->
+                <!-- Autonomous Control Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -256,29 +240,26 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="16dp">
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Autonomous Control"
                             android:textAppearance="?attr/textAppearanceHeadline6" />
-
                         <Button
                             android:id="@+id/button_avoid"
                             style="@style/Widget.MaterialComponents.Button.TextButton"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:text="Start Obstacle Avoidance"
-                            android:onClick="@{() -> viewModel.onAvoidModeButtonClicked()}"
-                            app:icon="@drawable/ic_baseline_explore_24"
-                            />
+                            android:layout_marginTop="8dp"
+                            android:text='@{viewModel.isAutoPaused ? "Resume" : "Pause"}'
+                            android:onClick="@{() -> viewModel.onPauseResumeButtonClicked()}"
+                            app:icon='@{viewModel.isAutoPaused ? @drawable/ic_play_arrow : @drawable/ic_pause}'
+                            tools:text="Pause"/>
                          <Button
                              android:id="@+id/button_goto"
                              style="@style/Widget.MaterialComponents.Button.TextButton"
                              android:layout_width="match_parent"
                              android:layout_height="wrap_content"
-                             android:layout_marginTop="8dp"
                              android:text="Go to Heading"
                              android:onClick="@{() -> viewModel.onGoToHeadingClicked()}"
                              app:icon="@drawable/ic_baseline_radar_24"
@@ -286,7 +267,7 @@
                      </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                 <!-- Accessories Card -->
+                <!-- Accessories Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -297,20 +278,17 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="16dp">
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Accessories"
                             android:textAppearance="?attr/textAppearanceHeadline6" />
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:layout_marginTop="16dp"
                             android:gravity="center">
-
                             <Button
                                 android:id="@+id/button_turret_left"
                                 style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
@@ -334,12 +312,34 @@
                                 android:layout_height="wrap_content"
                                 android:onClick="@{() -> viewModel.onTurretRightClicked()}"
                                 app:icon="@drawable/ic_rotate_right"/>
-
                         </LinearLayout>
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switch_light"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Headlight"
+                            android:onCheckedChanged="@{(switch, checked) -> viewModel.onLightSwitched(checked)}"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Speed"/>
+                        <SeekBar
+                            android:id="@+id/seekbar_speed"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:max="255"
+                            android:progress="@{viewModel.speed}"
+                            app:onSeekBarChangeListener="@{viewModel.onSpeedChanged}"
+                            />
                      </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- Log Panel -->
+                <include layout="@layout/log_panel" app:viewModel="@{viewModel}" />
+
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </ScrollView>
+    </LinearLayout>
 </layout>

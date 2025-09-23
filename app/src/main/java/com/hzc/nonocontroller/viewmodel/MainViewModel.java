@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import android.util.Log;
+import android.widget.SeekBar;
 
 import com.hzc.nonocontroller.BlunoLibrary;
 import com.hzc.nonocontroller.data.TelemetryData;
@@ -16,6 +17,9 @@ public class MainViewModel extends ViewModel {
     private final MutableLiveData<Boolean> _isManualMode = new MutableLiveData<>(true);
     public final LiveData<Boolean> isManualMode = _isManualMode;
 
+    private final MutableLiveData<Boolean> _isAutoPaused = new MutableLiveData<>(true);
+    public final LiveData<Boolean> isAutoPaused = _isAutoPaused;
+
     private final MutableLiveData<TelemetryData> _telemetry = new MutableLiveData<>(new TelemetryData());
     public final LiveData<TelemetryData> telemetry = _telemetry;
 
@@ -24,6 +28,9 @@ public class MainViewModel extends ViewModel {
 
     private final MutableLiveData<BlunoLibrary.connectionStateEnum> _connectionState = new MutableLiveData<>(BlunoLibrary.connectionStateEnum.isNull);
     public final LiveData<BlunoLibrary.connectionStateEnum> connectionState = _connectionState;
+
+    private final MutableLiveData<Integer> _speed = new MutableLiveData<>(150);
+    public final LiveData<Integer> speed = _speed;
 
     public MainViewModel(BlunoLibrary blunoLibrary) {
         this.blunoLibrary = blunoLibrary;
@@ -55,7 +62,8 @@ public class MainViewModel extends ViewModel {
 
     public void onAutoModeSelected() {
         _isManualMode.setValue(false);
-        // Note: Does not send a command immediately. User chooses an auto sub-mode.
+        _isAutoPaused.setValue(true); // Start in paused state
+        sendCommand("CMD:MOVE:STOP\n"); // Ensure robot is stopped when switching to auto
     }
 
     public void onStopButtonClicked() {
@@ -87,8 +95,14 @@ public class MainViewModel extends ViewModel {
     }
 
     // --- Autonomous Control ---
-    public void onAvoidModeButtonClicked() {
-        sendCommand("CMD:MODE:AVOID\n");
+    public void onPauseResumeButtonClicked() {
+        if (Boolean.TRUE.equals(_isAutoPaused.getValue())) {
+            _isAutoPaused.setValue(false);
+            sendCommand("CMD:MODE:AVOID\n"); // Resume autonomous movement
+        } else {
+            _isAutoPaused.setValue(true);
+            sendCommand("CMD:MOVE:STOP\n"); // Pause
+        }
     }
 
     public void onGoToHeadingClicked() {
@@ -109,6 +123,31 @@ public class MainViewModel extends ViewModel {
     public void onTurretRightClicked() {
         sendCommand("CMD:TURRET:RIGHT\n");
     }
+
+    public void onLightSwitched(boolean isChecked) {
+        if (isChecked) {
+            sendCommand("CMD:LIGHT:ON\n");
+        } else {
+            sendCommand("CMD:LIGHT:OFF\n");
+        }
+    }
+
+    public final SeekBar.OnSeekBarChangeListener onSpeedChanged = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (fromUser) {
+                _speed.setValue(progress);
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) { }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            sendCommand("CMD:SPEED:" + seekBar.getProgress() + "\n");
+        }
+    };
 
     // --- Private Helper ---
     private void sendCommand(String command) {

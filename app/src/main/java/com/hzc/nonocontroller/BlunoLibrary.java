@@ -41,12 +41,25 @@ public class BlunoLibrary {
     public BlunoLibrary(Context context, BlunoLibraryDelegate delegate) {
         this.mainContext = context;
         this.delegate = delegate;
+        initializePermissions();
     }
 
 	//\u00e9\u009c\u0080\u00e8\u00a6\u0081\u00e7\u0094\u00b3\u00e8\u00af\u00b7\u00e7\u009a\u0084\u00e6\u009d\u0083\u00e9\u0099\u0090
-	private  String [] mStrPermission = {
-			Manifest.permission.ACCESS_FINE_LOCATION
-	};
+	private String[] mStrPermission;
+
+	private void initializePermissions() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+			mStrPermission = new String[]{
+					Manifest.permission.ACCESS_FINE_LOCATION,
+					Manifest.permission.BLUETOOTH_SCAN,
+					Manifest.permission.BLUETOOTH_CONNECT
+			};
+		} else {
+			mStrPermission = new String[]{
+					Manifest.permission.ACCESS_FINE_LOCATION
+			};
+		}
+	}
 
 	private List<String>  mPerList   = new ArrayList<>();
 	private List<String>  mPerNoList = new ArrayList<>();
@@ -146,9 +159,9 @@ private String mBaudrateBuffer = "AT+CURRUART=" + mBaudrate + "\n\n";
 		mScanDeviceDialog = new AlertDialog.Builder(mainContext)
 		.setTitle("BLE Device Scan...").setAdapter(mLeDeviceListAdapter, new DialogInterface.OnClickListener() {
 			
+			@SuppressLint("MissingPermission")
 			@Override
-			public void onClick(DialogInterface dialog, int which)
-			{
+			public void onClick(DialogInterface dialog, int which) {
 				final BluetoothDevice device = mLeDeviceListAdapter.getDevice(which);
 				if (device == null)
 					return;
@@ -184,6 +197,7 @@ private String mBaudrateBuffer = "AT+CURRUART=" + mBaudrate + "\n\n";
 		})
 		.setOnCancelListener(new DialogInterface.OnCancelListener() {
 
+			@SuppressLint("MissingPermission")
 			@Override
 			public void onCancel(DialogInterface arg0) {
 				System.out.println("mBluetoothAdapter.stopLeScan");
@@ -407,6 +421,7 @@ private String mBaudrateBuffer = "AT+CURRUART=" + mBaudrate + "\n\n";
         }
     }
     
+	@SuppressLint("MissingPermission")
 	void scanLeDevice(final boolean enable) {
 		if (enable) {
 			// Stops scanning after a pre-defined scan period.
@@ -456,6 +471,7 @@ private String mBaudrateBuffer = "AT+CURRUART=" + mBaudrate + "\n\n";
 	// Device scan callback.
 	private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
 
+		@SuppressLint("MissingPermission")
 		@Override
 		public void onLeScan(final BluetoothDevice device, int rssi,
 				byte[] scanRecord) {
@@ -571,6 +587,7 @@ private String mBaudrateBuffer = "AT+CURRUART=" + mBaudrate + "\n\n";
 			return i;
 		}
 
+		@SuppressLint("MissingPermission")
 		@Override
 		public View getView(int i, View view, ViewGroup viewGroup) {
 			ViewHolder viewHolder;

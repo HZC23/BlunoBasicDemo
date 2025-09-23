@@ -2,8 +2,9 @@ package com.hzc.nonocontroller;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,10 +16,6 @@ import com.hzc.nonocontroller.data.TelemetryData;
 import com.hzc.nonocontroller.databinding.ActivityMainBinding;
 import com.hzc.nonocontroller.viewmodel.MainViewModel;
 import com.hzc.nonocontroller.viewmodel.MainViewModelFactory;
-
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ImageButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,9 +39,6 @@ public class MainActivity extends AppCompatActivity implements BlunoLibraryDeleg
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
 
-        // Set up the toolbar
-        setSupportActionBar(binding.toolbar);
-
         // Initialize BlunoLibrary
         blunoLibrary.request(1000, new BlunoLibrary.OnPermissionsResult() {
             @Override
@@ -62,25 +56,10 @@ public class MainActivity extends AppCompatActivity implements BlunoLibraryDeleg
         blunoLibrary.serialBegin(115200);
 
         // Set up D-Pad listeners
-        setupDirectionalButton(R.id.button_up, "UP");
-        setupDirectionalButton(R.id.button_down, "DOWN");
-        setupDirectionalButton(R.id.button_left, "LEFT");
-        setupDirectionalButton(R.id.button_right, "RIGHT");
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_scan) {
-            viewModel.onScanClicked();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        setupDirectionalButton(binding.buttonUp, "UP");
+        setupDirectionalButton(binding.buttonDown, "DOWN");
+        setupDirectionalButton(binding.buttonLeft, "LEFT");
+        setupDirectionalButton(binding.buttonRight, "RIGHT");
     }
 
     // BlunoLibrary lifecycle methods
@@ -151,8 +130,7 @@ public class MainActivity extends AppCompatActivity implements BlunoLibraryDeleg
         }
     }
 
-    private void setupDirectionalButton(int buttonId, final String direction) {
-        ImageButton button = findViewById(buttonId);
+    private void setupDirectionalButton(ImageButton button, final String direction) {
         button.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
