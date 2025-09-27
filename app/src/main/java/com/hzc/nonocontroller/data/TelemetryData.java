@@ -1,44 +1,93 @@
 package com.hzc.nonocontroller.data;
 
-public class TelemetryData {
-    // champs (exemples)
-    public int heading = 0; // Placeholder for heading
-    public String state = ""; // Placeholder for state
-    private int distance;
-    private int distanceLaser;
-    private int battery; // ou Integer ou LiveData<Integer>
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
 
-    // getters/setters for DataBinding
-    public int getDistance() { return distance; }
-    public void setDistance(int distance) { this.distance = distance; }
+import com.hzc.nonocontroller.BR;
 
-    public int getDistanceLaser() { return distanceLaser; }
-    public void setDistanceLaser(int distanceLaser) { this.distanceLaser = distanceLaser; }
+public class TelemetryData extends BaseObservable {
 
-    public int getBattery() { return battery; }
-    public void setBattery(int battery) { this.battery = battery; }
+    private String state = "--";
+    private int heading = 0;
+    private int distance = 0;
+    private int distanceLaser = 0;
+    private int battery = 0;
+    private int speedTarget = 0;
+    private int speedCurrent = 0;
 
-    private int speedTarget;
+    @Bindable
+    public String getState() {
+        return state;
+    }
 
+    public void setState(String state) {
+        this.state = state;
+        notifyPropertyChanged(BR.state);
+    }
+
+    @Bindable
+    public int getHeading() {
+        return heading;
+    }
+
+    public void setHeading(int heading) {
+        this.heading = heading;
+        notifyPropertyChanged(BR.heading);
+    }
+
+    @Bindable
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+        notifyPropertyChanged(BR.distance);
+    }
+
+    @Bindable
+    public int getDistanceLaser() {
+        return distanceLaser;
+    }
+
+    public void setDistanceLaser(int distanceLaser) {
+        this.distanceLaser = distanceLaser;
+        notifyPropertyChanged(BR.distanceLaser);
+    }
+
+    @Bindable
+    public int getBattery() {
+        return battery;
+    }
+
+    public void setBattery(int battery) {
+        this.battery = battery;
+        notifyPropertyChanged(BR.battery);
+    }
+
+    @Bindable
     public int getSpeedTarget() {
         return speedTarget;
     }
 
     public void setSpeedTarget(int speedTarget) {
         this.speedTarget = speedTarget;
+        notifyPropertyChanged(BR.speedTarget);
+        notifyPropertyChanged(BR.speed);
     }
 
-    private int speedCurrent;
-
+    @Bindable
     public int getSpeedCurrent() {
         return speedCurrent;
     }
 
     public void setSpeedCurrent(int speedCurrent) {
         this.speedCurrent = speedCurrent;
+        notifyPropertyChanged(BR.speedCurrent);
     }
 
-    // si tu utilises LiveData :
-    // private MutableLiveData<Integer> distance = new MutableLiveData<>();
-    // public LiveData<Integer> getDistance() { return distance; }
+    @Bindable
+    public int getSpeed() {
+        return speedTarget;
+    }
 }

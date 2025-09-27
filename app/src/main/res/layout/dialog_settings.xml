@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/settings_console_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ouvrir la console"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAppearance="?attr/textAppearanceSubtitle1"/>
+
+    <TextView
+        android:id="@+id/settings_calibration_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Page de calibration"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAppearance="?attr/textAppearanceSubtitle1"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/settings_dark_mode_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mode Sombre"
+        android:padding="12dp"
+        android:textAppearance="?attr/textAppearanceSubtitle1"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/settings_invert_layout_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Inverser les contrôles"
+        android:padding="12dp"
+        android:textAppearance="?attr/textAppearanceSubtitle1"/>
+
+</LinearLayout>

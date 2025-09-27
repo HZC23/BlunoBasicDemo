@@ -35,7 +35,16 @@ PackageManager.hasSystemFeature(FEATURE_BLUETOOTH_LE) -->
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".CalibrationActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme">
+        </activity>
+        <activity
+            android:name=".ConsoleActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme">
+        </activity>
     </application>
 
 </manifest>

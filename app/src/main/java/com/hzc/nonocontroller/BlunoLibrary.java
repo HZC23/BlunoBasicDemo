@@ -25,6 +25,8 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresPermission;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,13 +37,26 @@ import android.widget.Toast;
 
 public class BlunoLibrary {
 
+	private static BlunoLibrary instance = null;
 	private Context mainContext;
     private BlunoLibraryDelegate delegate;
 
-    public BlunoLibrary(Context context, BlunoLibraryDelegate delegate) {
+    private BlunoLibrary(Context context) {
         this.mainContext = context;
-        this.delegate = delegate;
         initializePermissions();
+    }
+
+	public static BlunoLibrary getInstance(Context context, BlunoLibraryDelegate delegate) {
+		if (instance == null) {
+			instance = new BlunoLibrary(context.getApplicationContext());
+		}
+		instance.delegate = delegate;
+		instance.mainContext = context;
+		return instance;
+	}
+
+	public void setDelegate(BlunoLibraryDelegate delegate) {
+	    this.delegate = delegate;
     }
 
 	//\u00e9\u009c\u0080\u00e8\u00a6\u0081\u00e7\u0094\u00b3\u00e8\u00af\u00b7\u00e7\u009a\u0084\u00e6\u009d\u0083\u00e9\u0099\u0090
@@ -214,6 +229,7 @@ private String mBaudrateBuffer = "AT+CURRUART=" + mBaudrate + "\n\n";
     
     
     
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public void onResumeProcess() {
     	System.out.println("BlUNOActivity onResume");
 		// Ensures Bluetooth is enabled on the device. If Bluetooth is not

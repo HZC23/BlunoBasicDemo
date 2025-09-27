@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel;
 import android.util.Log;
 import android.widget.SeekBar;
 
+import android.view.View;
+
 import com.hzc.nonocontroller.BlunoLibrary;
 import com.hzc.nonocontroller.data.TelemetryData;
 
@@ -14,12 +16,6 @@ public class MainViewModel extends ViewModel {
     private final BlunoLibrary blunoLibrary;
 
     // LiveData for UI state
-    private final MutableLiveData<Boolean> _isManualMode = new MutableLiveData<>(true);
-    public final LiveData<Boolean> isManualMode = _isManualMode;
-
-    private final MutableLiveData<Boolean> _isAutoPaused = new MutableLiveData<>(true);
-    public final LiveData<Boolean> isAutoPaused = _isAutoPaused;
-
     private final MutableLiveData<TelemetryData> _telemetry = new MutableLiveData<>(new TelemetryData());
     public final LiveData<TelemetryData> telemetry = _telemetry;
 
@@ -34,36 +30,71 @@ public class MainViewModel extends ViewModel {
 
     public MainViewModel(BlunoLibrary blunoLibrary) {
         this.blunoLibrary = blunoLibrary;
+        // Observe the telemetry data to update UI visibility
+        _telemetry.observeForever(this::updateUIVisibilityFromState);
     }
+
+    // --- UI Visibility LiveData ---
+    private final MutableLiveData<Integer> _autonomousModesVisibility = new MutableLiveData<>(View.VISIBLE);
+    public final LiveData<Integer> autonomousModesVisibility = _autonomousModesVisibility;
+
+    private final MutableLiveData<Integer> _activeAutonomousControlsVisibility = new MutableLiveData<>(View.GONE);
+    public final LiveData<Integer> activeAutonomousControlsVisibility = _activeAutonomousControlsVisibility;
+
+    private final MutableLiveData<Integer> _systemControlsVisibility = new MutableLiveData<>(View.GONE);
+    public final LiveData<Integer> systemControlsVisibility = _systemControlsVisibility;
+
 
     // --- LiveData Updaters ---
     public void updateTelemetry(TelemetryData newTelemetry) {
         _telemetry.postValue(newTelemetry);
     }
 
+    private void updateUIVisibilityFromState(TelemetryData telemetryData) {
+        if (telemetryData == null || telemetryData.getState() == null) {
+            setIdleModeVisibility();
+            return;
+        }
+
+        String state = telemetryData.getState();
+        if (state.contains("FOLLOW_HEADING") || state.contains("SMART_AVOIDANCE")) {
+            setActiveAutonomousModeVisibility();
+        } else { // Covers IDLE, MANUAL_CONTROL, etc.
+            setIdleModeVisibility();
+        }
+    }
+
+    private void setIdleModeVisibility() {
+        _autonomousModesVisibility.postValue(View.VISIBLE);
+        _activeAutonomousControlsVisibility.postValue(View.GONE);
+    }
+
+    private void setActiveAutonomousModeVisibility() {
+        _autonomousModesVisibility.postValue(View.GONE);
+        _activeAutonomousControlsVisibility.postValue(View.VISIBLE);
+    }
+
     public void updateSerialMonitor(String newText) {
-        _serialMonitor.postValue(newText);
+        String currentText = _serialMonitor.getValue();
+        if (currentText == null) {
+            currentText = "";
+        }
+        // Append new text and limit the length to avoid excessive memory usage
+        String updatedText = currentText + newText;
+        if (updatedText.length() > 5000) { // Keep last 5000 characters
+            updatedText = updatedText.substring(updatedText.length() - 5000);
+        }
+        _serialMonitor.postValue(updatedText);
     }
 
     public void setConnectionState(BlunoLibrary.connectionStateEnum s) {
-        _connectionState.setValue(s);
+        _connectionState.postValue(s);
     }
 
     // --- UI Event Handlers ---
 
-    public void onScanClicked() {
-        blunoLibrary.buttonScanOnClickProcess();
-    }
-
-    public void onManualModeSelected() {
-        _isManualMode.setValue(true);
-        sendCommand("CMD:MODE:MANUAL\n");
-    }
-
-    public void onAutoModeSelected() {
-        _isManualMode.setValue(false);
-        _isAutoPaused.setValue(true); // Start in paused state
-        sendCommand("CMD:MOVE:STOP\n"); // Ensure robot is stopped when switching to auto
+    public void onTurretScanClicked(View view) {
+        sendCommand("CMD:SCAN:START\n");
     }
 
     public void onStopButtonClicked() {
@@ -94,36 +125,43 @@ public class MainViewModel extends ViewModel {
         sendCommand("CMD:MOVE:STOP\n");
     }
 
+    
+
     // --- Autonomous Control ---
-    public void onPauseResumeButtonClicked() {
-        if (Boolean.TRUE.equals(_isAutoPaused.getValue())) {
-            _isAutoPaused.setValue(false);
-            sendCommand("CMD:MODE:AVOID\n"); // Resume autonomous movement
-        } else {
-            _isAutoPaused.setValue(true);
-            sendCommand("CMD:MOVE:STOP\n"); // Pause
-        }
+    public void onSmartAvoidanceClicked() {
+        sendCommand("CMD:MODE:AVOID\n");
     }
 
-    public void onGoToHeadingClicked() {
-        // Here you would typically open a dialog to get the heading angle.
-        // For now, sending a default command.
-        sendCommand("CMD:GOTO:90\n");
+    public void onGoToHeadingClicked(int heading) {
+        sendCommand("CMD:GOTO:" + heading + "\n");
     }
 
-    // --- Accessories ---
-    public void onTurretLeftClicked() {
-        sendCommand("CMD:TURRET:LEFT\n");
+    public void onSentryModeClicked() {
+        sendCommand("CMD:MODE:SENTRY\n");
     }
 
-    public void onTurretCenterClicked() {
-        sendCommand("CMD:TURRET:CENTER\n");
+    public void onPauseClicked() {
+        sendCommand("CMD:PAUSE\n");
     }
 
-    public void onTurretRightClicked() {
-        sendCommand("CMD:TURRET:RIGHT\n");
+    public void onResumeClicked() {
+        sendCommand("CMD:RESUME\n");
     }
 
+    // --- Settings ---
+    public void onSettingsClicked() {
+        // Logic to show settings dialog will be in MainActivity
+    }
+
+    public void onToggleConsole(boolean show) {
+        // This will be used to update a LiveData for console visibility
+    }
+
+    public void onGoToCalibrationClicked() {
+        // This could navigate to a new Activity or show a specific dialog
+    }
+
+    // --- Accessories & System ---
     public void onLightSwitched(boolean isChecked) {
         if (isChecked) {
             sendCommand("CMD:LIGHT:ON\n");
@@ -148,6 +186,22 @@ public class MainViewModel extends ViewModel {
             sendCommand("CMD:SPEED:" + seekBar.getProgress() + "\n");
         }
     };
+
+    public void onCalibrateCompassClicked() {
+        sendCommand("CMD:CALIBRATE:COMPASS\n");
+    }
+
+    
+
+    public void onSetCompassOffsetClicked(float offset) {
+        sendCommand("CMD:COMPASS_OFFSET:" + offset + "\n");
+    }
+
+    public void onSendLcdMessageClicked(String message) {
+        if (message != null && !message.isEmpty()) {
+            sendCommand("CMD:LCD:" + message + "\n");
+        }
+    }
 
     // --- Private Helper ---
     private void sendCommand(String command) {
